@@ -9,6 +9,9 @@
 | Скилл | Что делает |
 |---|---|
 | [`drawio`](./drawio/) | Создаёт **редактируемые диаграммы** в формате draw.io / diagrams.net (`.drawio`) из текстового описания — блок-схемы, оргструктуры, схемы архитектуры, ER-диаграммы, mind map. Генерирует валидный XML напрямую, аккуратно раскладывает узлы по сетке и открывает файл в приложении draw.io или на app.diagrams.net. |
+| [`pm`](./pm/) | **Управление проектами** по PMBOK® 7-е издание (PMI). Полная PM-сессия — диагностика → план → артефакты (устав, WBS, реестр рисков, roadmap) → проверка. |
+| [`ba`](./ba/) | **Бизнес-анализ** по BABOK v3 (IIBA) и Карлу Вигерсу. Сбор и проработка требований — SRS/ТЗ, user stories, use cases, BRD/FRD, модели процессов и данных. |
+| [`pr`](./pr/) | **Экспертный ассистент по BPMN 2.0** (методология Bruce Silver «Method and Style»). Моделирование бизнес-процессов, проверка диаграмм на корректность, выбор элементов нотации. |
 
 ## Установка
 
@@ -17,22 +20,32 @@
 **Глобально (доступно во всех проектах):**
 
 ```bash
-# Linux / macOS
+# Linux / macOS — один скилл
 git clone https://github.com/cy94q5pb7v-rgb/agent-skills.git
 cp -r agent-skills/drawio ~/.claude/skills/drawio
+
+# …или сразу все скиллы коллекции
+for s in drawio pm ba pr; do cp -r "agent-skills/$s" ~/.claude/skills/"$s"; done
 ```
 
 ```powershell
-# Windows (PowerShell)
+# Windows (PowerShell) — один скилл
 git clone https://github.com/cy94q5pb7v-rgb/agent-skills.git
 Copy-Item -Recurse agent-skills\drawio "$env:USERPROFILE\.claude\skills\drawio"
+
+# …или сразу все
+'drawio','pm','ba','pr' | ForEach-Object { Copy-Item -Recurse "agent-skills\$_" "$env:USERPROFILE\.claude\skills\$_" }
 ```
 
 **Только в одном проекте:** скопируйте папку в `.claude/skills/<имя>` внутри корня проекта.
 
-После установки перезапустите сессию Claude Code (или начните новую) — скилл появится в списке. Проверить: вызовите `/drawio` или просто попросите «нарисуй блок-схему …».
+После установки перезапустите сессию Claude Code (или начните новую) — скилл появится в списке. Проверить: вызовите `/drawio` (или `/pm`, `/ba`, `/pr`) либо просто опишите задачу словами — «нарисуй блок-схему …», «составь план проекта …», «собери требования …».
 
 ## Структура скилла
+
+Минимально скилл — это папка с одним файлом `SKILL.md`. Скилл может дополнительно нести справочники и шаблоны.
+
+`pm`, `ba`, `pr` — одиночный `SKILL.md` (вся методология внутри). `drawio` дополнительно везёт справочник по формату и готовые каркасы:
 
 ```
 drawio/
@@ -43,6 +56,9 @@ drawio/
     ├── flowchart.drawio    # готовый каркас блок-схемы
     ├── orgchart.drawio     # готовый каркас оргструктуры
     └── architecture.drawio # готовый каркас архитектурной схемы
+
+pm/  ba/  pr/
+└── SKILL.md            # одиночный файл — методичка целиком
 ```
 
 `SKILL.md` начинается с YAML-frontmatter:
