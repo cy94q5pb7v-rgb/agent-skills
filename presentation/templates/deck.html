@@ -3,14 +3,17 @@
   Болванка автономной HTML-презентации для скилла `presentation`.
   КАК ПОЛЬЗОВАТЬСЯ (для агента):
     1. Скопируй этот файл в рабочую папку как <тема>.html
-    2. Поменяй токены в :root (цвета/шрифты) под бренд/настроение.
-    3. Замени слайды-примеры на свои. Один слайд = один <section> с классом раскладки
-       (.layout-cover / .layout-statement / .layout-split / .layout-cards /
-        .layout-stats / .layout-list / .layout-quote). Дублируй нужные.
-    4. Полную шпаргалку по раскладкам и бюджету высоты см. references/layout-system.md
-    5. НИЧЕГО не трогай ниже маркера ENGINE (внизу файла) — это движок слайдов.
-  Файл самодостаточен: движок встроен, внешняя зависимость только одна — веб-шрифт
-  (есть системный фолбэк). Открывается двойным кликом, листается ← → Space, печатается в PDF.
+    2. Поменяй токены в :root (цвета/шрифты) под бренд/настроение
+       (готовый пресет «Сбер» и др. — в references/layout-system.md).
+    3. В фирменной рамке .fr поменяй «Бренд» на имя бренда, .sec — на раздел.
+       Номер слайда (.pg) движок проставляет САМ — не трогай.
+    4. Замени слайды-примеры на свои. Один слайд = один <section> с классом-ролью
+       (.layout-cover / .layout-statement / .layout-cols / .layout-stats /
+        .layout-cards / .layout-quote / .layout-compare). Дублируй нужные.
+    5. Полную шпаргалку по раскладкам, рамке и бюджету высоты см. references/layout-system.md
+    6. НИЧЕГО не трогай ниже маркера ENGINE (внизу файла) — это движок слайдов.
+  Файл самодостаточен: движок встроен, внешняя зависимость только одна — веб-шрифт.
+  Открывается двойным кликом, листается ← → Space, печатается в PDF.
 -->
 <html lang="ru">
 <head>
@@ -18,113 +21,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Презентация</title>
 
-<!-- Шрифты с ПОЛНОЙ поддержкой кириллицы (важно: без неё русский текст превратится в «квадраты»).
-     IBM Plex — нейтральный, не «ИИ-шный» дефолт. Альтернативы с кириллицей: Golos Text, Onest, Geologica. -->
+<!-- Шрифты с ПОЛНОЙ поддержкой кириллицы (без неё русский текст станет «квадратами»).
+     IBM Plex — нейтральный, не «ИИ-шный» дефолт. Альтернативы: Golos Text, Onest, Geologica. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
-  /* ── ТОКЕНЫ ДИЗАЙНА — меняй здесь, остальное подтянется ───────────────────── */
+  /* ── ТОКЕНЫ ДИЗАЙНА — меняй здесь ───────────────────────────────────────── */
   :root{
-    --bg:#FAF8F3;          /* тёплая бумага — основной фон */
-    --bg-invert:#16130F;   /* почти-чёрный — для 1–2 акцентных слайдов */
-    --ink:#1B1813;         /* основной текст на светлом */
+    --bg:#FAF8F3;          /* основной фон */
+    --bg-invert:#16130F;   /* тёмный фон для 1–2 акцентных слайдов */
+    --ink:#1B1813;         /* основной текст */
     --ink-invert:#F3EFE6;  /* текст на тёмном */
     --muted:#6E665B;       /* вторичный текст */
-    --line:#E4DDD0;        /* тонкая разделительная линия */
-    --accent:#B4441F;      /* ОДИН осознанный акцент (терракота). Не радуга. */
-    --card:#FFFFFF;        /* фон карточки на светлом слайде */
-
-    --font-display:"IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --font-body:"IBM Plex Sans", system-ui, "Segoe UI", sans-serif;
-    --font-mono:"IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+    --muted-d:#A89C8C;     /* вторичный на тёмном */
+    --line:#E4DDD0;        /* тонкая линия */
+    --line-d:#352D24;      /* линия на тёмном */
+    --accent:#B4441F;      /* ОДИН осознанный акцент */
+    --accent-l:#E08A5F;    /* светлее — для тёмных слайдов */
+    --card:#FFFFFF;
+    --font-display:"IBM Plex Serif", Georgia, serif;
+    --font-body:"IBM Plex Sans", system-ui, sans-serif;
+    --font-mono:"IBM Plex Mono", ui-monospace, monospace;
+    --x:120px;             /* боковое поле */
   }
-
   *{ box-sizing:border-box; }
 
-  /* ── БАЗА СЛАЙДА ──────────────────────────────────────────────────────────
-     Канва 1920×1080. Безопасные поля 96px сверху/снизу, 120px по бокам.
-     => полезная область 1680 × 888 px. Любая раскладка живёт внутри неё. */
+  /* ── БАЗА СЛАЙДА ─── канва 1920×1080, поля под фирменную рамку ───────────── */
   deck-stage section{
-    padding:96px 120px;
+    position:relative;
+    padding:150px var(--x) 130px;     /* сверху/снизу — место под рамку; полезная область 1680×800 */
     background:var(--bg);
     color:var(--ink);
     font-family:var(--font-body);
-    -webkit-hyphens:manual; hyphens:manual; /* не рвать длинные русские слова */
+    -webkit-hyphens:manual; hyphens:manual;
   }
   section.invert{ background:var(--bg-invert); color:var(--ink-invert); }
-  section.invert .kicker{ color:#E8895F; }
-  section.invert .card{ background:#211C16; border-color:#352D24; }
-  section.invert .muted, section.invert .card p{ color:#A89C8C; }
+
+  /* ── СКВОЗНАЯ ФИРМЕННАЯ РАМКА (на каждом слайде) ────────────────────────── */
+  .fr{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+  .fr-top{ position:absolute; top:58px; left:var(--x); right:var(--x); display:flex; justify-content:space-between; align-items:center;
+    font:600 17px/1 var(--font-mono); letter-spacing:.14em; text-transform:uppercase; }
+  .wm{ display:flex; align-items:center; gap:11px; color:var(--ink); }
+  .wm .dot{ width:15px; height:15px; border-radius:50%; background:var(--accent); }
+  .fr-top .sec{ color:var(--muted); }
+  .fr-bot{ position:absolute; bottom:54px; left:var(--x); right:var(--x); display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--line); padding-top:20px;
+    font:600 15px/1 var(--font-mono); letter-spacing:.1em; color:var(--muted); }
+  section.invert .wm{ color:var(--ink-invert); }
+  section.invert .wm .dot{ background:var(--accent-l); }
+  section.invert .fr-top .sec{ color:var(--muted-d); }
+  section.invert .fr-bot{ border-color:var(--line-d); color:var(--muted-d); }
+
+  /* фирменный круг-мотив (декор; data-decorative — аудит его игнорирует) */
+  .ring{ position:absolute; border-radius:50%; border:1.5px solid color-mix(in srgb, var(--accent-l) 40%, transparent); z-index:0; }
+  .disc{ position:absolute; border-radius:50%; background:color-mix(in srgb, var(--accent-l) 8%, transparent); z-index:0; }
 
   /* ── ОБЩИЕ ЭЛЕМЕНТЫ ───────────────────────────────────────────────────── */
-  .kicker{
-    font:600 22px/1 var(--font-mono);
-    letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
-    margin:0 0 18px;
-  }
-  .title{ font:500 64px/1.04 var(--font-display); margin:0; text-wrap:balance; max-width:26ch; }
-  .muted{ color:var(--muted); }
-  .ph{ /* плейсхолдер вместо стоковой картинки — НЕ генерируем фейковые изображения */
-    display:flex; align-items:center; justify-content:center; height:100%;
-    border:1px dashed var(--line); color:var(--muted);
-    font:500 20px/1.3 var(--font-mono); letter-spacing:.04em; text-align:center; padding:24px;
-  }
+  .kicker{ font:600 19px/1 var(--font-mono); letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin:0 0 18px; }
+  section.invert .kicker{ color:var(--accent-l); }
+  .title{ font:600 58px/1.1 var(--font-display); letter-spacing:-.01em; margin:0; max-width:26ch; text-wrap:balance; }
+  .ph{ display:flex; align-items:center; justify-content:center; height:100%; border:1px dashed var(--line); color:var(--muted);
+    font:500 20px/1.3 var(--font-mono); letter-spacing:.04em; text-align:center; padding:24px; }
 
-  /* ── РАСКЛАДКИ (каждая заполняет область 888px по высоте — переполнение исключено) ── */
+  /* ── РАСКЛАДКИ (заполняют область 800px по высоте — переполнение исключено) ── */
 
-  /* Обложка / финал: крупный заголовок, прижат к низу */
-  .layout-cover{ display:grid; align-content:end; gap:28px; }
-  .layout-cover h1{ font:500 124px/1.0 var(--font-display); margin:0; max-width:18ch; text-wrap:balance; }
-  .layout-cover .sub{ font:400 34px/1.35 var(--font-body); max-width:34ch; color:var(--muted); margin:0; }
-  .layout-cover .by{ font:600 22px/1 var(--font-mono); letter-spacing:.1em; text-transform:uppercase; }
+  /* Обложка / финал */
+  .layout-cover{ display:grid; align-content:end; gap:28px; position:relative; z-index:1; }
+  .layout-cover h1{ font:500 110px/1.02 var(--font-display); letter-spacing:-.02em; margin:0; max-width:19ch; text-wrap:balance; }
+  .layout-cover .sub{ font:400 32px/1.4 var(--font-body); max-width:38ch; color:var(--muted); margin:0; }
+  section.invert .layout-cover .sub{ color:var(--muted-d); }
 
-  /* Одна крупная мысль */
-  .layout-statement{ display:grid; align-content:center; gap:24px; }
-  .layout-statement .lead{ font:500 92px/1.06 var(--font-display); margin:0; max-width:22ch; text-wrap:balance; }
+  /* Тезис: вертикальная акцентная линия + крупный текст */
+  .layout-statement{ display:grid; grid-template-columns:5px 1fr; gap:54px; align-content:center; align-items:center; position:relative; z-index:1; }
+  .layout-statement .bar{ background:var(--accent); align-self:stretch; }
+  .layout-statement .lead{ font:500 80px/1.1 var(--font-display); letter-spacing:-.02em; margin:0; max-width:26ch; text-wrap:balance; }
 
-  /* Две колонки: текст + визуал/второй блок */
-  .layout-split{ display:grid; grid-template-columns:1fr 1fr; gap:88px; align-items:center; }
-  .layout-split .body{ font:400 32px/1.45 var(--font-body); color:var(--muted); margin:20px 0 0; max-width:30ch; }
+  /* Редакционные колонки (предпочтительно для «3 аспекта» — крупный индекс + линии) */
+  .layout-cols{ display:grid; grid-template-rows:auto 1fr; gap:56px; }
+  .cols{ display:grid; grid-template-columns:repeat(3,1fr); height:100%; }
+  .cols.two{ grid-template-columns:repeat(2,1fr); }
+  .col{ display:flex; flex-direction:column; justify-content:center; gap:20px; padding:0 46px; border-left:1px solid var(--line); }
+  .col:first-child{ border-left:none; padding-left:0; }
+  .col:last-child{ padding-right:0; }
+  .col .idx{ font:500 28px/1 var(--font-mono); color:var(--accent); letter-spacing:.04em; }
+  .col h3{ font:600 32px/1.18 var(--font-body); margin:0; }
+  .col p{ font:400 23px/1.5 var(--muted); margin:0; max-width:25ch; }
+  section.invert .col{ border-color:var(--line-d); }
+  section.invert .col .idx{ color:var(--accent-l); }
+  section.invert .col p{ color:var(--muted-d); }
 
-  /* Заголовок + ряд из 2–3 карточек */
+  /* Крупные цифры (верхняя линия на всю ширину + колонки) */
+  .layout-stats{ display:grid; grid-template-rows:auto 1fr; gap:56px; }
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); align-content:center; border-top:1.5px solid var(--ink); padding-top:48px; }
+  section.invert .stats{ border-color:var(--ink-invert); }
+  .stat{ padding-left:44px; border-left:1px solid var(--line); }
+  .stat:first-child{ border-left:none; padding-left:0; }
+  section.invert .stat{ border-color:var(--line-d); }
+  .stat .num{ font:500 96px/1 var(--font-display); color:var(--accent); letter-spacing:-.02em; }
+  section.invert .stat .num{ color:var(--accent-l); }
+  .stat .lab{ font:400 23px/1.4 var(--muted); margin-top:14px; max-width:18ch; }
+  section.invert .stat .lab{ color:var(--muted-d); }
+
+  /* Карточки (альтернатива колонкам) */
   .layout-cards{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
-  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; align-content:start; }
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; align-content:center; }
   .cards.two{ grid-template-columns:repeat(2,1fr); }
-  .card{ display:flex; flex-direction:column; gap:14px; padding:40px; background:var(--card); border:1px solid var(--line); }
+  .card{ display:flex; flex-direction:column; gap:14px; padding:40px; background:var(--card); border:1px solid var(--line); min-height:230px; }
   .card h3{ font:600 30px/1.15 var(--font-body); margin:0; }
   .card p{ font:400 23px/1.4 var(--muted); margin:0; }
-
-  /* Крупные цифры */
-  .layout-stats{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
-  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:48px; align-content:center; }
-  .stat .num{ font:500 108px/1 var(--font-display); color:var(--accent); }
-  .stat .lab{ font:400 24px/1.35 var(--muted); margin-top:10px; max-width:18ch; }
-
-  /* Нумерованный список с воздухом (вместо «4 кружочка со стрелками») */
-  .layout-list{ display:grid; grid-template-rows:auto 1fr; gap:44px; }
-  .list{ display:flex; flex-direction:column; gap:30px; align-content:center; margin:0; padding:0; }
-  .list li{ display:grid; grid-template-columns:72px 1fr; gap:24px; align-items:baseline; list-style:none; }
-  .list .n{ font:500 42px/1 var(--font-display); color:var(--accent); }
-  .list .t{ font:400 30px/1.35 var(--ink); }
-  section.invert .list .t{ color:var(--ink-invert); }
+  section.invert .card{ background:#211C16; border-color:var(--line-d); }
+  section.invert .card p{ color:var(--muted-d); }
 
   /* Цитата */
-  .layout-quote{ display:grid; align-content:center; gap:40px; }
-  .layout-quote blockquote{ font:400 58px/1.22 var(--font-display); margin:0; max-width:26ch; text-wrap:balance; }
-  .layout-quote .by{ font:600 24px/1 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .layout-quote{ display:grid; align-content:center; gap:40px; position:relative; z-index:1; }
+  .layout-quote blockquote{ font:400 56px/1.22 var(--font-display); margin:0; max-width:26ch; text-wrap:balance; }
+  .layout-quote .by{ font:600 22px/1 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  section.invert .layout-quote .by{ color:var(--muted-d); }
 
-  /* Сравнение «было / стало», «мы / они» — две колонки-списка */
-  .layout-compare{ display:grid; grid-template-rows:auto 1fr; gap:44px; }
-  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-content:start; }
-  .compare .col{ display:flex; flex-direction:column; gap:18px; padding:40px; border:1px solid var(--line); }
-  .compare .col.win{ background:var(--card); border-color:var(--accent); }
+  /* Сравнение «было / стало» */
+  .layout-compare{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-content:center; }
+  .compare .col2{ display:flex; flex-direction:column; gap:18px; padding:40px; border:1px solid var(--line); }
+  .compare .col2.win{ border-color:var(--accent); }
   .compare h3{ font:600 28px/1.15 var(--font-body); margin:0; }
-  .compare ul{ margin:0; padding-left:1.1em; }
-  .compare li{ font:400 24px/1.5 var(--muted); margin:.25em 0; }
+  .compare ul{ margin:0; padding-left:1.1em; } .compare li{ font:400 24px/1.5 var(--muted); margin:.25em 0; }
 
-  /* .stretch — занять весь остаток высоты колонки (для медиа-плейсхолдера/картинки) */
   .stretch{ height:100%; width:100%; }
 </style>
 </head>
@@ -132,46 +155,52 @@
 
 <deck-stage width="1920" height="1080">
 
-  <!-- 01 · Обложка (тёмный акцент). Не делай обложку «пустым титульником» —
-       дай реальный посыл. -->
+  <!-- 01 · Обложка (тёмный акцент + фирменный круг). Не делай пустым «титульником». -->
   <section class="layout-cover invert">
-    <p class="kicker">Подзаголовок-кикер</p>
-    <h1 data-fit data-fit-min="72">Главная мысль презентации одной фразой</h1>
-    <p class="sub">Короткое пояснение: для кого и о чём. Одно предложение, без воды.</p>
-    <p class="by">Автор · Дата · Контекст</p>
-  </section>
-
-  <!-- 02 · Statement — один тезис -->
-  <section class="layout-statement">
-    <p class="kicker">Проблема</p>
-    <p class="lead" data-fit data-fit-min="56">Сформулируй одну сильную мысль крупно. Её должно быть видно за 3 секунды.</p>
-  </section>
-
-  <!-- 03 · Split — текст + визуал-плейсхолдер -->
-  <section class="layout-split">
-    <div>
-      <p class="kicker">Контекст</p>
-      <h2 class="title" data-fit data-fit-min="40">Заголовок раздела слева</h2>
-      <p class="body">Пояснение в 2–3 строки. Конкретика вместо общих слов: цифры, факты, имена.</p>
+    <div class="ring" data-decorative style="width:680px;height:680px;right:-170px;top:-190px;"></div>
+    <div class="disc" data-decorative style="width:430px;height:430px;right:-40px;top:-60px;"></div>
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>Подзаголовок презентации</span><span class="pg"></span></div>
     </div>
-    <div class="ph">МЕСТО ПОД ВИЗУАЛ<br>(реальный скриншот / схему / фото — попроси у пользователя)</div>
+    <p class="kicker">Кикер</p>
+    <h1 data-fit data-fit-min="64">Главная мысль презентации одной фразой</h1>
+    <p class="sub">Короткое пояснение: для кого и о чём. Одно предложение, без воды.</p>
   </section>
 
-  <!-- 04 · Cards — 3 карточки -->
-  <section class="layout-cards">
+  <!-- 02 · Тезис -->
+  <section class="layout-statement">
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>Главное</span><span class="pg"></span></div>
+    </div>
+    <div class="bar"></div>
+    <p class="lead" data-fit data-fit-min="52">Одна сильная мысль крупно. Её должно быть видно за 3 секунды.</p>
+  </section>
+
+  <!-- 03 · Редакционные колонки (3 аспекта) -->
+  <section class="layout-cols">
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>Подпись слева</span><span class="pg"></span></div>
+    </div>
     <div>
       <p class="kicker">Подход</p>
-      <h2 class="title" data-fit data-fit-min="40">Три составляющих решения</h2>
+      <h2 class="title" data-fit data-fit-min="40">Заголовок-вывод, а не тема</h2>
     </div>
-    <div class="cards">
-      <div class="card"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="card"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="card"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+    <div class="cols">
+      <div class="col"><div class="idx">01</div><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="col"><div class="idx">02</div><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="col"><div class="idx">03</div><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
     </div>
   </section>
 
-  <!-- 05 · Stats — крупные цифры (НЕ выдумывай числа — только реальные данные) -->
+  <!-- 04 · Цифры (НЕ выдумывай числа) -->
   <section class="layout-stats">
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>В цифрах</span><span class="pg"></span></div>
+    </div>
     <div>
       <p class="kicker">Результат</p>
       <h2 class="title" data-fit data-fit-min="40">Цифры, которые говорят сами за себя</h2>
@@ -183,39 +212,50 @@
     </div>
   </section>
 
-  <!-- 06 · List — нумерованные шаги -->
-  <section class="layout-list">
-    <div>
-      <p class="kicker">Как это работает</p>
-      <h2 class="title" data-fit data-fit-min="40">Процесс по шагам</h2>
+  <!-- 05 · Карточки (альтернатива колонкам) -->
+  <section class="layout-cards">
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>Состав</span><span class="pg"></span></div>
     </div>
-    <ul class="list">
-      <li><span class="n">01</span><span class="t">Первый шаг — что происходит и какой результат.</span></li>
-      <li><span class="n">02</span><span class="t">Второй шаг — что происходит и какой результат.</span></li>
-      <li><span class="n">03</span><span class="t">Третий шаг — что происходит и какой результат.</span></li>
-      <li><span class="n">04</span><span class="t">Четвёртый шаг — что происходит и какой результат.</span></li>
-    </ul>
+    <div>
+      <p class="kicker">Состав</p>
+      <h2 class="title" data-fit data-fit-min="40">Три составляющих решения</h2>
+    </div>
+    <div class="cards">
+      <div class="card"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="card"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="card"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+    </div>
   </section>
 
-  <!-- 07 · Quote (тёмный акцент) -->
+  <!-- 06 · Цитата (тёмный акцент) -->
   <section class="layout-quote invert">
-    <blockquote data-fit data-fit-min="38">«Сильная цитата или ключевой вывод, ради которого собрана эта дека».</blockquote>
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
+      <div class="fr-bot"><span>Цитата</span><span class="pg"></span></div>
+    </div>
+    <blockquote data-fit data-fit-min="36">«Сильная цитата или ключевой вывод, ради которого собрана эта дека».</blockquote>
     <div class="by">— Источник цитаты</div>
   </section>
 
-  <!-- 08 · Финал — вывод и действие (НЕ «Спасибо за внимание») -->
-  <section class="layout-cover">
+  <!-- 07 · Финал — вывод и действие (НЕ «Спасибо за внимание») -->
+  <section class="layout-cover invert">
+    <div class="ring" data-decorative style="width:620px;height:620px;left:-200px;bottom:-220px;"></div>
+    <div class="disc" data-decorative style="width:380px;height:380px;left:-70px;bottom:-90px;"></div>
+    <div class="fr" data-decorative>
+      <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Вывод</span></div>
+      <div class="fr-bot"><span>Контакт / следующий шаг</span><span class="pg"></span></div>
+    </div>
     <p class="kicker">Что дальше</p>
-    <h1 data-fit data-fit-min="64">Главный вывод + конкретное действие</h1>
+    <h1 data-fit data-fit-min="56">Главный вывод + конкретное действие</h1>
     <p class="sub">Контакт / следующий шаг / ссылка.</p>
   </section>
 
 </deck-stage>
 
-<!-- Заметки докладчика (опционально): по одной строке на слайд, в том же порядке.
-<script id="speaker-notes" type="application/json">
-["Заметка к слайду 1", "Заметка к слайду 2"]
-</script>
+<!-- Заметки докладчика (опционально): по строке на слайд, в том же порядке.
+<script id="speaker-notes" type="application/json">["Заметка 1", "Заметка 2"]</script>
 -->
 
 <!-- ENGINE ─── НИЖЕ НИЧЕГО НЕ МЕНЯЙ ─── движок <deck-stage> (vanilla JS, без зависимостей) ── -->
@@ -231,7 +271,6 @@
       deck-stage { display: block; background: white; }
       deck-stage section { page-break-after: always; break-after: page; }
       deck-stage section:last-child { page-break-after: auto; }
-      deck-stage .deck-overlay { display: none !important; }
     }`;
   document.head.appendChild(printStyle);
 
@@ -251,33 +290,26 @@
           :host { display:block; width:100vw; height:100vh; background:#000; overflow:hidden; position:relative; }
           :host([noscale]) { width:${w}px; height:${h}px; background:transparent; }
           :host([noscale]) .deck-canvas { transform:none !important; }
-          :host([noscale]) .deck-overlay { display:none; }
           .deck-canvas { position:absolute; left:50%; top:50%; width:${w}px; height:${h}px; transform-origin:0 0; background:white; }
           ::slotted(section) { width:${w}px; height:${h}px; box-sizing:border-box; overflow:hidden; }
           ::slotted(section:not(.active)) { display:none !important; }
-          .deck-overlay { position:fixed; bottom:16px; right:20px; color:rgba(255,255,255,.6);
-            font:13px/1 ui-monospace, Menlo, Consolas, monospace; background:rgba(0,0,0,.4);
-            padding:6px 10px; border-radius:4px; pointer-events:none; z-index:100; }
           .deck-nav-hit { position:fixed; top:0; bottom:0; width:15%; cursor:pointer; z-index:50; }
           .deck-nav-hit.prev { left:0; } .deck-nav-hit.next { right:0; }
           @media (hover: hover) { .deck-nav-hit { display:none; } }
         </style>
         <div class="deck-canvas"><slot></slot></div>
-        <div class="deck-overlay"><span class="idx">1</span>/<span class="total">1</span></div>
         <div class="deck-nav-hit prev" data-dir="-1"></div>
         <div class="deck-nav-hit next" data-dir="+1"></div>`;
       this._canvas = this.shadowRoot.querySelector('.deck-canvas');
-      this._idxEl = this.shadowRoot.querySelector('.idx');
-      this._totalEl = this.shadowRoot.querySelector('.total');
       this._collectSections(); this._tagSections(); this._applyScale();
-      this._restorePosition(); this._renderOverlay(); this._showCurrent();
+      this._restorePosition(); this._renderPager(); this._showCurrent();
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this._fitText());
       this._onKey = this._onKey.bind(this); this._onResize = this._onResize.bind(this); this._onTap = this._onTap.bind(this);
       document.addEventListener('keydown', this._onKey);
       window.addEventListener('resize', this._onResize);
       this.shadowRoot.querySelectorAll('.deck-nav-hit').forEach(el => el.addEventListener('click', this._onTap));
       this._slotObserver = new MutationObserver(() => {
-        this._collectSections(); this._tagSections(); this._clampCurrent(); this._renderOverlay(); this._showCurrent();
+        this._collectSections(); this._tagSections(); this._clampCurrent(); this._renderPager(); this._showCurrent();
       });
       this._slotObserver.observe(this, { childList: true });
       this._onMessage = (e) => { if (e.data && typeof e.data === 'object' && typeof e.data.seekSlide === 'number') this.goToSlide(e.data.seekSlide); };
@@ -296,7 +328,7 @@
     goToSlide(idx) {
       if (!this._sections.length) return;
       idx = Math.max(0, Math.min(this._sections.length - 1, idx | 0));
-      this._current = idx; this._showCurrent(); this._renderOverlay(); this._persistPosition(); this._postSlideChanged();
+      this._current = idx; this._showCurrent(); this._persistPosition(); this._postSlideChanged();
     }
     _clampCurrent() { this._current = this._sections.length ? Math.max(0, Math.min(this._sections.length - 1, this._current)) : 0; }
     nextSlide() { this.goToSlide(this._current + 1); }
@@ -312,11 +344,16 @@
         }
       });
     }
+    _renderPager() {
+      // Авто-нумерация в фирменной рамке: заполняем .pg каждого слайда «NN / TT».
+      const tt = String(this._sections.length).padStart(2, '0');
+      this._sections.forEach((s, i) => {
+        const pg = s.querySelector('.pg');
+        if (pg) pg.textContent = `${String(i + 1).padStart(2, '0')} / ${tt}`;
+      });
+    }
     _showCurrent() { this._sections.forEach((s, i) => s.classList.toggle('active', i === this._current)); this._fitText(); }
     _fitText() {
-      // Render-time усадка крупного текста по образцу fitty: если элемент с [data-fit]
-      // вылезает по ширине/высоте своей ячейки (длинное слово, большое число, длинный
-      // заголовок) — пошагово уменьшаем шрифт до data-fit-min. Только усадка, не рост.
       const s = this._sections[this._current];
       if (!s) return;
       requestAnimationFrame(() => {
@@ -333,10 +370,6 @@
           }
         });
       });
-    }
-    _renderOverlay() {
-      if (this._idxEl) this._idxEl.textContent = String(this._current + 1);
-      if (this._totalEl) this._totalEl.textContent = String(this._sections.length);
     }
     _applyScale() {
       if (this.hasAttribute('noscale')) { this._canvas.style.transform = 'none'; this._canvas.style.left = '0'; this._canvas.style.top = '0'; return; }
