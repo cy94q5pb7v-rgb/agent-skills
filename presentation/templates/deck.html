@@ -1,0 +1,382 @@
+<!doctype html>
+<!--
+  Болванка автономной HTML-презентации для скилла `presentation`.
+  КАК ПОЛЬЗОВАТЬСЯ (для агента):
+    1. Скопируй этот файл в рабочую папку как <тема>.html
+    2. Поменяй токены в :root (цвета/шрифты) под бренд/настроение.
+    3. Замени слайды-примеры на свои. Один слайд = один <section> с классом раскладки
+       (.layout-cover / .layout-statement / .layout-split / .layout-cards /
+        .layout-stats / .layout-list / .layout-quote). Дублируй нужные.
+    4. Полную шпаргалку по раскладкам и бюджету высоты см. references/layout-system.md
+    5. НИЧЕГО не трогай ниже маркера ENGINE (внизу файла) — это движок слайдов.
+  Файл самодостаточен: движок встроен, внешняя зависимость только одна — веб-шрифт
+  (есть системный фолбэк). Открывается двойным кликом, листается ← → Space, печатается в PDF.
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Презентация</title>
+
+<!-- Шрифты с ПОЛНОЙ поддержкой кириллицы (важно: без неё русский текст превратится в «квадраты»).
+     IBM Plex — нейтральный, не «ИИ-шный» дефолт. Альтернативы с кириллицей: Golos Text, Onest, Geologica. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ── ТОКЕНЫ ДИЗАЙНА — меняй здесь, остальное подтянется ───────────────────── */
+  :root{
+    --bg:#FAF8F3;          /* тёплая бумага — основной фон */
+    --bg-invert:#16130F;   /* почти-чёрный — для 1–2 акцентных слайдов */
+    --ink:#1B1813;         /* основной текст на светлом */
+    --ink-invert:#F3EFE6;  /* текст на тёмном */
+    --muted:#6E665B;       /* вторичный текст */
+    --line:#E4DDD0;        /* тонкая разделительная линия */
+    --accent:#B4441F;      /* ОДИН осознанный акцент (терракота). Не радуга. */
+    --card:#FFFFFF;        /* фон карточки на светлом слайде */
+
+    --font-display:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --font-body:"IBM Plex Sans", system-ui, "Segoe UI", sans-serif;
+    --font-mono:"IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  /* ── БАЗА СЛАЙДА ──────────────────────────────────────────────────────────
+     Канва 1920×1080. Безопасные поля 96px сверху/снизу, 120px по бокам.
+     => полезная область 1680 × 888 px. Любая раскладка живёт внутри неё. */
+  deck-stage section{
+    padding:96px 120px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-hyphens:manual; hyphens:manual; /* не рвать длинные русские слова */
+  }
+  section.invert{ background:var(--bg-invert); color:var(--ink-invert); }
+  section.invert .kicker{ color:#E8895F; }
+  section.invert .card{ background:#211C16; border-color:#352D24; }
+  section.invert .muted, section.invert .card p{ color:#A89C8C; }
+
+  /* ── ОБЩИЕ ЭЛЕМЕНТЫ ───────────────────────────────────────────────────── */
+  .kicker{
+    font:600 22px/1 var(--font-mono);
+    letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+    margin:0 0 18px;
+  }
+  .title{ font:500 64px/1.04 var(--font-display); margin:0; text-wrap:balance; max-width:26ch; }
+  .muted{ color:var(--muted); }
+  .ph{ /* плейсхолдер вместо стоковой картинки — НЕ генерируем фейковые изображения */
+    display:flex; align-items:center; justify-content:center; height:100%;
+    border:1px dashed var(--line); color:var(--muted);
+    font:500 20px/1.3 var(--font-mono); letter-spacing:.04em; text-align:center; padding:24px;
+  }
+
+  /* ── РАСКЛАДКИ (каждая заполняет область 888px по высоте — переполнение исключено) ── */
+
+  /* Обложка / финал: крупный заголовок, прижат к низу */
+  .layout-cover{ display:grid; align-content:end; gap:28px; }
+  .layout-cover h1{ font:500 124px/1.0 var(--font-display); margin:0; max-width:18ch; text-wrap:balance; }
+  .layout-cover .sub{ font:400 34px/1.35 var(--font-body); max-width:34ch; color:var(--muted); margin:0; }
+  .layout-cover .by{ font:600 22px/1 var(--font-mono); letter-spacing:.1em; text-transform:uppercase; }
+
+  /* Одна крупная мысль */
+  .layout-statement{ display:grid; align-content:center; gap:24px; }
+  .layout-statement .lead{ font:500 92px/1.06 var(--font-display); margin:0; max-width:22ch; text-wrap:balance; }
+
+  /* Две колонки: текст + визуал/второй блок */
+  .layout-split{ display:grid; grid-template-columns:1fr 1fr; gap:88px; align-items:center; }
+  .layout-split .body{ font:400 32px/1.45 var(--font-body); color:var(--muted); margin:20px 0 0; max-width:30ch; }
+
+  /* Заголовок + ряд из 2–3 карточек */
+  .layout-cards{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; align-content:start; }
+  .cards.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ display:flex; flex-direction:column; gap:14px; padding:40px; background:var(--card); border:1px solid var(--line); }
+  .card h3{ font:600 30px/1.15 var(--font-body); margin:0; }
+  .card p{ font:400 23px/1.4 var(--muted); margin:0; }
+
+  /* Крупные цифры */
+  .layout-stats{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:48px; align-content:center; }
+  .stat .num{ font:500 108px/1 var(--font-display); color:var(--accent); }
+  .stat .lab{ font:400 24px/1.35 var(--muted); margin-top:10px; max-width:18ch; }
+
+  /* Нумерованный список с воздухом (вместо «4 кружочка со стрелками») */
+  .layout-list{ display:grid; grid-template-rows:auto 1fr; gap:44px; }
+  .list{ display:flex; flex-direction:column; gap:30px; align-content:center; margin:0; padding:0; }
+  .list li{ display:grid; grid-template-columns:72px 1fr; gap:24px; align-items:baseline; list-style:none; }
+  .list .n{ font:500 42px/1 var(--font-display); color:var(--accent); }
+  .list .t{ font:400 30px/1.35 var(--ink); }
+  section.invert .list .t{ color:var(--ink-invert); }
+
+  /* Цитата */
+  .layout-quote{ display:grid; align-content:center; gap:40px; }
+  .layout-quote blockquote{ font:400 58px/1.22 var(--font-display); margin:0; max-width:26ch; text-wrap:balance; }
+  .layout-quote .by{ font:600 24px/1 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+
+  /* Сравнение «было / стало», «мы / они» — две колонки-списка */
+  .layout-compare{ display:grid; grid-template-rows:auto 1fr; gap:44px; }
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-content:start; }
+  .compare .col{ display:flex; flex-direction:column; gap:18px; padding:40px; border:1px solid var(--line); }
+  .compare .col.win{ background:var(--card); border-color:var(--accent); }
+  .compare h3{ font:600 28px/1.15 var(--font-body); margin:0; }
+  .compare ul{ margin:0; padding-left:1.1em; }
+  .compare li{ font:400 24px/1.5 var(--muted); margin:.25em 0; }
+
+  /* .stretch — занять весь остаток высоты колонки (для медиа-плейсхолдера/картинки) */
+  .stretch{ height:100%; width:100%; }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 · Обложка (тёмный акцент). Не делай обложку «пустым титульником» —
+       дай реальный посыл. -->
+  <section class="layout-cover invert">
+    <p class="kicker">Подзаголовок-кикер</p>
+    <h1 data-fit data-fit-min="72">Главная мысль презентации одной фразой</h1>
+    <p class="sub">Короткое пояснение: для кого и о чём. Одно предложение, без воды.</p>
+    <p class="by">Автор · Дата · Контекст</p>
+  </section>
+
+  <!-- 02 · Statement — один тезис -->
+  <section class="layout-statement">
+    <p class="kicker">Проблема</p>
+    <p class="lead" data-fit data-fit-min="56">Сформулируй одну сильную мысль крупно. Её должно быть видно за 3 секунды.</p>
+  </section>
+
+  <!-- 03 · Split — текст + визуал-плейсхолдер -->
+  <section class="layout-split">
+    <div>
+      <p class="kicker">Контекст</p>
+      <h2 class="title" data-fit data-fit-min="40">Заголовок раздела слева</h2>
+      <p class="body">Пояснение в 2–3 строки. Конкретика вместо общих слов: цифры, факты, имена.</p>
+    </div>
+    <div class="ph">МЕСТО ПОД ВИЗУАЛ<br>(реальный скриншот / схему / фото — попроси у пользователя)</div>
+  </section>
+
+  <!-- 04 · Cards — 3 карточки -->
+  <section class="layout-cards">
+    <div>
+      <p class="kicker">Подход</p>
+      <h2 class="title" data-fit data-fit-min="40">Три составляющих решения</h2>
+    </div>
+    <div class="cards">
+      <div class="card"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="card"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="card"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 · Stats — крупные цифры (НЕ выдумывай числа — только реальные данные) -->
+  <section class="layout-stats">
+    <div>
+      <p class="kicker">Результат</p>
+      <h2 class="title" data-fit data-fit-min="40">Цифры, которые говорят сами за себя</h2>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" data-fit data-fit-min="56">2×</div><div class="lab">подпись к метрике</div></div>
+      <div class="stat"><div class="num" data-fit data-fit-min="56">−40%</div><div class="lab">подпись к метрике</div></div>
+      <div class="stat"><div class="num" data-fit data-fit-min="56">12</div><div class="lab">подпись к метрике</div></div>
+    </div>
+  </section>
+
+  <!-- 06 · List — нумерованные шаги -->
+  <section class="layout-list">
+    <div>
+      <p class="kicker">Как это работает</p>
+      <h2 class="title" data-fit data-fit-min="40">Процесс по шагам</h2>
+    </div>
+    <ul class="list">
+      <li><span class="n">01</span><span class="t">Первый шаг — что происходит и какой результат.</span></li>
+      <li><span class="n">02</span><span class="t">Второй шаг — что происходит и какой результат.</span></li>
+      <li><span class="n">03</span><span class="t">Третий шаг — что происходит и какой результат.</span></li>
+      <li><span class="n">04</span><span class="t">Четвёртый шаг — что происходит и какой результат.</span></li>
+    </ul>
+  </section>
+
+  <!-- 07 · Quote (тёмный акцент) -->
+  <section class="layout-quote invert">
+    <blockquote data-fit data-fit-min="38">«Сильная цитата или ключевой вывод, ради которого собрана эта дека».</blockquote>
+    <div class="by">— Источник цитаты</div>
+  </section>
+
+  <!-- 08 · Финал — вывод и действие (НЕ «Спасибо за внимание») -->
+  <section class="layout-cover">
+    <p class="kicker">Что дальше</p>
+    <h1 data-fit data-fit-min="64">Главный вывод + конкретное действие</h1>
+    <p class="sub">Контакт / следующий шаг / ссылка.</p>
+  </section>
+
+</deck-stage>
+
+<!-- Заметки докладчика (опционально): по одной строке на слайд, в том же порядке.
+<script id="speaker-notes" type="application/json">
+["Заметка к слайду 1", "Заметка к слайду 2"]
+</script>
+-->
+
+<!-- ENGINE ─── НИЖЕ НИЧЕГО НЕ МЕНЯЙ ─── движок <deck-stage> (vanilla JS, без зависимостей) ── -->
+<script>
+(() => {
+  if (customElements.get('deck-stage')) return;
+  const printStyle = document.createElement('style');
+  printStyle.id = 'deck-stage-print';
+  printStyle.textContent = `
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      body { margin: 0; }
+      deck-stage { display: block; background: white; }
+      deck-stage section { page-break-after: always; break-after: page; }
+      deck-stage section:last-child { page-break-after: auto; }
+      deck-stage .deck-overlay { display: none !important; }
+    }`;
+  document.head.appendChild(printStyle);
+
+  class DeckStage extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this._current = 0; this._sections = []; this._resizeRaf = 0;
+      this._storageKey = `deck_cur_slide_${location.pathname}`;
+    }
+    connectedCallback() {
+      const w = parseInt(this.getAttribute('width'), 10) || 1920;
+      const h = parseInt(this.getAttribute('height'), 10) || 1080;
+      this._w = w; this._h = h;
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host { display:block; width:100vw; height:100vh; background:#000; overflow:hidden; position:relative; }
+          :host([noscale]) { width:${w}px; height:${h}px; background:transparent; }
+          :host([noscale]) .deck-canvas { transform:none !important; }
+          :host([noscale]) .deck-overlay { display:none; }
+          .deck-canvas { position:absolute; left:50%; top:50%; width:${w}px; height:${h}px; transform-origin:0 0; background:white; }
+          ::slotted(section) { width:${w}px; height:${h}px; box-sizing:border-box; overflow:hidden; }
+          ::slotted(section:not(.active)) { display:none !important; }
+          .deck-overlay { position:fixed; bottom:16px; right:20px; color:rgba(255,255,255,.6);
+            font:13px/1 ui-monospace, Menlo, Consolas, monospace; background:rgba(0,0,0,.4);
+            padding:6px 10px; border-radius:4px; pointer-events:none; z-index:100; }
+          .deck-nav-hit { position:fixed; top:0; bottom:0; width:15%; cursor:pointer; z-index:50; }
+          .deck-nav-hit.prev { left:0; } .deck-nav-hit.next { right:0; }
+          @media (hover: hover) { .deck-nav-hit { display:none; } }
+        </style>
+        <div class="deck-canvas"><slot></slot></div>
+        <div class="deck-overlay"><span class="idx">1</span>/<span class="total">1</span></div>
+        <div class="deck-nav-hit prev" data-dir="-1"></div>
+        <div class="deck-nav-hit next" data-dir="+1"></div>`;
+      this._canvas = this.shadowRoot.querySelector('.deck-canvas');
+      this._idxEl = this.shadowRoot.querySelector('.idx');
+      this._totalEl = this.shadowRoot.querySelector('.total');
+      this._collectSections(); this._tagSections(); this._applyScale();
+      this._restorePosition(); this._renderOverlay(); this._showCurrent();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this._fitText());
+      this._onKey = this._onKey.bind(this); this._onResize = this._onResize.bind(this); this._onTap = this._onTap.bind(this);
+      document.addEventListener('keydown', this._onKey);
+      window.addEventListener('resize', this._onResize);
+      this.shadowRoot.querySelectorAll('.deck-nav-hit').forEach(el => el.addEventListener('click', this._onTap));
+      this._slotObserver = new MutationObserver(() => {
+        this._collectSections(); this._tagSections(); this._clampCurrent(); this._renderOverlay(); this._showCurrent();
+      });
+      this._slotObserver.observe(this, { childList: true });
+      this._onMessage = (e) => { if (e.data && typeof e.data === 'object' && typeof e.data.seekSlide === 'number') this.goToSlide(e.data.seekSlide); };
+      window.addEventListener('message', this._onMessage);
+    }
+    disconnectedCallback() {
+      document.removeEventListener('keydown', this._onKey);
+      window.removeEventListener('resize', this._onResize);
+      window.removeEventListener('message', this._onMessage);
+      this._slotObserver?.disconnect();
+    }
+    static get observedAttributes() { return ['noscale']; }
+    attributeChangedCallback(name) { if (name === 'noscale') this._applyScale(); }
+    get totalSlides() { return this._sections.length; }
+    get currentSlide() { return this._current; }
+    goToSlide(idx) {
+      if (!this._sections.length) return;
+      idx = Math.max(0, Math.min(this._sections.length - 1, idx | 0));
+      this._current = idx; this._showCurrent(); this._renderOverlay(); this._persistPosition(); this._postSlideChanged();
+    }
+    _clampCurrent() { this._current = this._sections.length ? Math.max(0, Math.min(this._sections.length - 1, this._current)) : 0; }
+    nextSlide() { this.goToSlide(this._current + 1); }
+    prevSlide() { this.goToSlide(this._current - 1); }
+    _collectSections() { this._sections = Array.from(this.children).filter(c => c.tagName === 'SECTION'); }
+    _tagSections() {
+      this._sections.forEach((s, i) => {
+        const idx = String(i + 1).padStart(2, '0');
+        if (!s.getAttribute('data-screen-label')) {
+          const heading = s.querySelector('h1, h2, [data-title]');
+          const title = heading ? heading.textContent.trim().slice(0, 30) : `Slide ${i + 1}`;
+          s.setAttribute('data-screen-label', `${idx} ${title}`);
+        }
+      });
+    }
+    _showCurrent() { this._sections.forEach((s, i) => s.classList.toggle('active', i === this._current)); this._fitText(); }
+    _fitText() {
+      // Render-time усадка крупного текста по образцу fitty: если элемент с [data-fit]
+      // вылезает по ширине/высоте своей ячейки (длинное слово, большое число, длинный
+      // заголовок) — пошагово уменьшаем шрифт до data-fit-min. Только усадка, не рост.
+      const s = this._sections[this._current];
+      if (!s) return;
+      requestAnimationFrame(() => {
+        s.querySelectorAll('[data-fit]').forEach(el => {
+          const cs = getComputedStyle(el);
+          const max = parseFloat(el.dataset.fitMax) || parseFloat(cs.fontSize);
+          const min = parseFloat(el.dataset.fitMin) || Math.max(24, max * 0.55);
+          el.style.fontSize = max + 'px';
+          const fits = () => el.scrollWidth <= el.clientWidth + 1 && el.scrollHeight <= el.clientHeight + 1;
+          let size = max, guard = 0;
+          while (guard++ < 28 && size > min && !fits()) {
+            size = Math.max(min, size - Math.max(1, size * 0.04));
+            el.style.fontSize = size + 'px';
+          }
+        });
+      });
+    }
+    _renderOverlay() {
+      if (this._idxEl) this._idxEl.textContent = String(this._current + 1);
+      if (this._totalEl) this._totalEl.textContent = String(this._sections.length);
+    }
+    _applyScale() {
+      if (this.hasAttribute('noscale')) { this._canvas.style.transform = 'none'; this._canvas.style.left = '0'; this._canvas.style.top = '0'; return; }
+      cancelAnimationFrame(this._resizeRaf);
+      this._resizeRaf = requestAnimationFrame(() => {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const scale = Math.min(vw / this._w, vh / this._h);
+        const tx = (vw - this._w * scale) / 2, ty = (vh - this._h * scale) / 2;
+        this._canvas.style.left = '0'; this._canvas.style.top = '0';
+        this._canvas.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+      });
+    }
+    _onResize() { this._applyScale(); }
+    _onKey(e) {
+      if (e.defaultPrevented) return;
+      const tag = (e.target && e.target.tagName || '').toLowerCase();
+      if (['input', 'textarea', 'select'].includes(tag)) return;
+      switch (e.key) {
+        case 'ArrowRight': case 'PageDown': case ' ': this.nextSlide(); e.preventDefault(); break;
+        case 'ArrowLeft': case 'PageUp': this.prevSlide(); e.preventDefault(); break;
+        case 'Home': this.goToSlide(0); e.preventDefault(); break;
+        case 'End': this.goToSlide(this._sections.length - 1); e.preventDefault(); break;
+      }
+    }
+    _onTap(e) { const dir = e.currentTarget.dataset.dir; if (dir === '+1') this.nextSlide(); else if (dir === '-1') this.prevSlide(); }
+    _persistPosition() { try { localStorage.setItem(this._storageKey, String(this._current)); } catch {} }
+    _restorePosition() { try { const v = parseInt(localStorage.getItem(this._storageKey), 10); if (!Number.isNaN(v)) this._current = Math.max(0, Math.min(this._sections.length - 1, v)); } catch {} }
+    _postSlideChanged() {
+      const note = this._getSpeakerNote(this._current);
+      const payload = { slideIndexChanged: this._current };
+      if (note) payload.note = note;
+      try { window.postMessage(payload, '*'); } catch {}
+    }
+    _getSpeakerNote(idx) {
+      const el = document.getElementById('speaker-notes'); if (!el) return null;
+      try { const arr = JSON.parse(el.textContent); return Array.isArray(arr) ? (arr[idx] || null) : null; } catch { return null; }
+    }
+  }
+  customElements.define('deck-stage', DeckStage);
+})();
+</script>
+</body>
+</html>
