@@ -21,28 +21,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Презентация</title>
 
-<!-- Шрифты с ПОЛНОЙ поддержкой кириллицы (без неё русский текст станет «квадратами»).
-     IBM Plex — нейтральный, не «ИИ-шный» дефолт. Альтернативы: Golos Text, Onest, Geologica. -->
+<!-- Golos Text — мягкий гротеск с полной кириллицей, ближайший бесплатный аналог
+     фирменного SB Sans Сбера. IBM Plex Mono — для моно-подписей (кикеры, рамка). -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
-  /* ── ТОКЕНЫ ДИЗАЙНА — меняй здесь ───────────────────────────────────────── */
+  /* ── ТОКЕНЫ ДИЗАЙНА — по умолчанию ФИРМЕННЫЙ СТИЛЬ СБЕРА (белый + зелёный) ─────
+     НЕ меняй цвета, если пользователь не назвал ДРУГОЙ бренд. Новые цвета не вводи. */
   :root{
-    --bg:#FAF8F3;          /* основной фон */
-    --bg-invert:#16130F;   /* тёмный фон для 1–2 акцентных слайдов */
-    --ink:#1B1813;         /* основной текст */
-    --ink-invert:#F3EFE6;  /* текст на тёмном */
-    --muted:#6E665B;       /* вторичный текст */
-    --muted-d:#A89C8C;     /* вторичный на тёмном */
-    --line:#E4DDD0;        /* тонкая линия */
-    --line-d:#352D24;      /* линия на тёмном */
-    --accent:#B4441F;      /* ОДИН осознанный акцент */
-    --accent-l:#E08A5F;    /* светлее — для тёмных слайдов */
-    --card:#FFFFFF;
-    --font-display:"IBM Plex Serif", Georgia, serif;
-    --font-body:"IBM Plex Sans", system-ui, sans-serif;
+    --bg:#FFFFFF;          /* основной фон — белый */
+    --bg-invert:#0A2017;   /* глубокий зелёный для 1–2 акцентных слайдов */
+    --ink:#0F1B14;         /* основной текст */
+    --ink-invert:#FFFFFF;  /* текст на тёмном */
+    --muted:#5E6B62;       /* вторичный текст */
+    --muted-d:#9FB5A8;     /* вторичный на тёмном */
+    --line:#E6EBE7;        /* тонкая линия */
+    --line-d:#1E3D2B;      /* линия на тёмном */
+    --accent:#21A038;      /* фирменный зелёный Сбера — единственный акцент */
+    --accent-l:#3FCB6E;    /* светлее — для тёмных слайдов */
+    --card:#F4F8F5;
+    --font-display:"Golos Text", system-ui, sans-serif;
+    --font-body:"Golos Text", system-ui, sans-serif;
     --font-mono:"IBM Plex Mono", ui-monospace, monospace;
     --x:120px;             /* боковое поле */
   }
@@ -64,19 +65,22 @@
   .fr-top{ position:absolute; top:58px; left:var(--x); right:var(--x); display:flex; justify-content:space-between; align-items:center;
     font:600 17px/1 var(--font-mono); letter-spacing:.14em; text-transform:uppercase; }
   .wm{ display:flex; align-items:center; gap:11px; color:var(--ink); }
-  .wm .dot{ width:15px; height:15px; border-radius:50%; background:var(--accent); }
+  .wm .dot{ width:16px; height:16px; border-radius:50%; background:conic-gradient(from -40deg,#21A038,#54D06A,#21B8B0,#FFD24D,#21A038); }
   .fr-top .sec{ color:var(--muted); }
   .fr-bot{ position:absolute; bottom:54px; left:var(--x); right:var(--x); display:flex; justify-content:space-between; align-items:center;
     border-top:1px solid var(--line); padding-top:20px;
     font:600 15px/1 var(--font-mono); letter-spacing:.1em; color:var(--muted); }
   section.invert .wm{ color:var(--ink-invert); }
-  section.invert .wm .dot{ background:var(--accent-l); }
   section.invert .fr-top .sec{ color:var(--muted-d); }
   section.invert .fr-bot{ border-color:var(--line-d); color:var(--muted-d); }
 
   /* фирменный круг-мотив (декор; data-decorative — аудит его игнорирует) */
   .ring{ position:absolute; border-radius:50%; border:1.5px solid color-mix(in srgb, var(--accent-l) 40%, transparent); z-index:0; }
   .disc{ position:absolute; border-radius:50%; background:color-mix(in srgb, var(--accent-l) 8%, transparent); z-index:0; }
+
+  /* Sber-штрихи: скругления (фирменная черта Сбера) */
+  .card, .bar-track, .ph{ border-radius:16px; }
+  .bar-track{ overflow:hidden; }
 
   /* ── ОБЩИЕ ЭЛЕМЕНТЫ ───────────────────────────────────────────────────── */
   .kicker{ font:600 19px/1 var(--font-mono); letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin:0 0 18px; }
