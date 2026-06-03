@@ -51,7 +51,7 @@
   /* ── БАЗА СЛАЙДА ─── канва 1920×1080, поля под фирменную рамку ───────────── */
   deck-stage section{
     position:relative;
-    padding:150px var(--x) 130px;     /* сверху/снизу — место под рамку; полезная область 1680×800 */
+    padding:132px var(--x) 118px;     /* сверху/снизу — место под рамку; полезная область 1680×830 */
     background:var(--bg);
     color:var(--ink);
     font-family:var(--font-body);
@@ -98,31 +98,48 @@
   .layout-statement .bar{ background:var(--accent); align-self:stretch; }
   .layout-statement .lead{ font:500 80px/1.1 var(--font-display); letter-spacing:-.02em; margin:0; max-width:26ch; text-wrap:balance; }
 
-  /* Редакционные колонки (предпочтительно для «3 аспекта» — крупный индекс + линии) */
-  .layout-cols{ display:grid; grid-template-rows:auto 1fr; gap:56px; }
-  .cols{ display:grid; grid-template-columns:repeat(3,1fr); height:100%; }
+  /* Редакционные колонки (предпочтительно для «3 аспекта»). Контент распределён по высоте
+     (индекс сверху, текст снизу) — колонка заполняет кадр, без пустот. */
+  .layout-cols{ display:grid; grid-template-rows:auto 1fr; gap:40px; }
+  .cols{ display:grid; grid-template-columns:repeat(3,1fr); height:100%; border-top:1.5px solid var(--ink); }
   .cols.two{ grid-template-columns:repeat(2,1fr); }
-  .col{ display:flex; flex-direction:column; justify-content:center; gap:20px; padding:0 46px; border-left:1px solid var(--line); }
+  .col{ display:flex; flex-direction:column; justify-content:flex-start; gap:22px; padding:40px 46px 0; border-left:1px solid var(--line); }
   .col:first-child{ border-left:none; padding-left:0; }
   .col:last-child{ padding-right:0; }
-  .col .idx{ font:500 28px/1 var(--font-mono); color:var(--accent); letter-spacing:.04em; }
-  .col h3{ font:600 32px/1.18 var(--font-body); margin:0; }
-  .col p{ font:400 23px/1.5 var(--muted); margin:0; max-width:25ch; }
+  .col .idx{ font:500 46px/1 var(--font-display); color:var(--accent); letter-spacing:-.01em; }
+  .col .ct{ display:flex; flex-direction:column; gap:14px; }
+  .col h3{ font:600 34px/1.18 var(--font-body); margin:0; }
+  .col p{ font:400 24px/1.55 var(--muted); margin:0; max-width:25ch; }
+  section.invert .cols{ border-color:var(--ink-invert); }
   section.invert .col{ border-color:var(--line-d); }
   section.invert .col .idx{ color:var(--accent-l); }
   section.invert .col p{ color:var(--muted-d); }
 
-  /* Крупные цифры (верхняя линия на всю ширину + колонки) */
-  .layout-stats{ display:grid; grid-template-rows:auto 1fr; gap:56px; }
-  .stats{ display:grid; grid-template-columns:repeat(3,1fr); align-content:center; border-top:1.5px solid var(--ink); padding-top:48px; }
+  /* Крупные цифры (верхняя линия на всю ширину + колонки). Числа крупные — заполняют кадр. */
+  .layout-stats{ display:grid; grid-template-rows:auto 1fr; gap:40px; }
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); height:100%; border-top:1.5px solid var(--ink); padding-top:48px; }
   section.invert .stats{ border-color:var(--ink-invert); }
   .stat{ padding-left:44px; border-left:1px solid var(--line); }
   .stat:first-child{ border-left:none; padding-left:0; }
   section.invert .stat{ border-color:var(--line-d); }
-  .stat .num{ font:500 96px/1 var(--font-display); color:var(--accent); letter-spacing:-.02em; }
+  .stat .num{ font:500 116px/1 var(--font-display); color:var(--accent); letter-spacing:-.03em; }
   section.invert .stat .num{ color:var(--accent-l); }
-  .stat .lab{ font:400 23px/1.4 var(--muted); margin-top:14px; max-width:18ch; }
+  .stat .lab{ font:400 24px/1.45 var(--muted); margin-top:20px; max-width:18ch; }
   section.invert .stat .lab{ color:var(--muted-d); }
+
+  /* График — горизонтальные бары (для показа реальных/посчитанных чисел). Ширину .bar-fill
+     задавай инлайн style="width:NN%" = доля от максимума. Заполняет кадр по ширине и высоте. */
+  .layout-chart{ display:grid; grid-template-rows:auto 1fr; gap:44px; }
+  .chart{ display:flex; flex-direction:column; justify-content:space-between; padding:10px 0; }
+  .bar-row{ display:grid; grid-template-columns:300px 1fr 150px; align-items:center; gap:28px; }
+  .bar-row .blab{ font:500 26px/1.25 var(--font-body); }
+  .bar-track{ height:46px; background:var(--line); }
+  .bar-fill{ height:100%; background:var(--accent); }
+  .bar-row .bval{ font:600 34px/1 var(--font-display); color:var(--accent); text-align:right; letter-spacing:-.01em; }
+  section.invert .bar-row .blab{ color:var(--ink-invert); }
+  section.invert .bar-track{ background:var(--line-d); }
+  section.invert .bar-fill{ background:var(--accent-l); }
+  section.invert .bar-row .bval{ color:var(--accent-l); }
 
   /* Карточки (альтернатива колонкам) */
   .layout-cards{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
@@ -189,9 +206,9 @@
       <h2 class="title" data-fit data-fit-min="40">Заголовок-вывод, а не тема</h2>
     </div>
     <div class="cols">
-      <div class="col"><div class="idx">01</div><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="col"><div class="idx">02</div><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="col"><div class="idx">03</div><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+      <div class="col"><div class="idx">01</div><div class="ct"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
+      <div class="col"><div class="idx">02</div><div class="ct"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
+      <div class="col"><div class="idx">03</div><div class="ct"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
     </div>
   </section>
 
@@ -212,20 +229,21 @@
     </div>
   </section>
 
-  <!-- 05 · Карточки (альтернатива колонкам) -->
-  <section class="layout-cards">
+  <!-- 05 · График (показ реальных/посчитанных чисел; .bar-fill width = доля от максимума) -->
+  <section class="layout-chart">
     <div class="fr" data-decorative>
       <div class="fr-top"><span class="wm"><span class="dot"></span>Бренд</span><span class="sec">Раздел</span></div>
-      <div class="fr-bot"><span>Состав</span><span class="pg"></span></div>
+      <div class="fr-bot"><span>В долях</span><span class="pg"></span></div>
     </div>
     <div>
-      <p class="kicker">Состав</p>
-      <h2 class="title" data-fit data-fit-min="40">Три составляющих решения</h2>
+      <p class="kicker">Структура</p>
+      <h2 class="title" data-fit data-fit-min="40">Заголовок-вывод по данным графика</h2>
     </div>
-    <div class="cards">
-      <div class="card"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="card"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div>
-      <div class="card"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div>
+    <div class="chart">
+      <div class="bar-row"><div class="blab">Категория А</div><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><div class="bval">82%</div></div>
+      <div class="bar-row"><div class="blab">Категория Б</div><div class="bar-track"><div class="bar-fill" style="width:64%"></div></div><div class="bval">64%</div></div>
+      <div class="bar-row"><div class="blab">Категория В</div><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><div class="bval">41%</div></div>
+      <div class="bar-row"><div class="blab">Категория Г</div><div class="bar-track"><div class="bar-fill" style="width:23%"></div></div><div class="bval">23%</div></div>
     </div>
   </section>
 
