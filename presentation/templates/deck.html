@@ -1,15 +1,15 @@
 <!doctype html>
 <!--
-  СКЕЛЕТ автономной HTML-презентации для скилла `presentation` (готовых слайдов НЕТ —
-  собираешь их сам по плану; см. инструкцию внутри <deck-stage> ниже).
+  Шаблон автономной HTML-презентации для скилла `presentation`. Внутри <deck-stage> —
+  СТАРТОВЫЙ набор из 6 РАЗНЫХ форм (образцы, не финальная дека).
   КАК ПОЛЬЗОВАТЬСЯ (для агента):
     1. Скопируй этот файл как presentation/<тема>.html
     2. Стиль по умолчанию — Сбер (белый/зелёный). :root НЕ трогай, если пользователь
        не назвал другой бренд (другие пресеты — references/layout-system.md §6).
-    3. Собери слайды внутри <deck-stage> — РОВНО столько, сколько просил пользователь,
-       вместив ВСЮ информацию (не обрезая). Форму каждого слайда выбирай под содержание,
-       варьируй; первый слайд — тоже по содержанию. Правила и анатомия — в комментарии
-       внутри <deck-stage>. Готовые блоки форм — references/layout-system.md §4.
+    3. Собери деку из стартовых форм: подбери форму под каждый пункт плана, ЗАМЕНИ
+       плейсхолдер-текст на реальный, СОХРАНИ разнообразие форм, лишние удали, нужные
+       добавь из references/layout-system.md §4. Первый слайд — обложка (layout-cover).
+       РОВНО столько слайдов, сколько просил пользователь, вместив ВСЮ информацию.
     4. Полную шпаргалку (формы, рамка, бюджет высоты) см. references/layout-system.md
     5. НИЧЕГО не трогай ниже маркера ENGINE (внизу файла) — это движок слайдов.
   Файл самодостаточен: движок встроен, внешняя зависимость только одна — веб-шрифт.
@@ -190,35 +190,72 @@
 
 <deck-stage width="1920" height="1080">
   <!--
-    === СОБИРАЙ СЛАЙДЫ ЗДЕСЬ — ПО ПЛАНУ presentation/<тема>.plan.md ===
-    ЭТО СКЕЛЕТ, А НЕ ГОТОВАЯ ДЕКА. Примеров-слайдов тут НЕТ намеренно: чтобы ты
-    не «заполнял шаблон по одному образцу», а ПРОЕКТИРОВАЛ каждый слайд заново
-    под его содержание. Именно отсюда раньше росла однотипность.
-
-    ПРАВИЛА:
-    1) РОВНО столько слайдов, сколько просил пользователь. Распредели ВСЮ
-       информацию по этому числу: приоритизируй, объединяй, уплотняй. НЕ создавай
-       лишние слайды и НЕ обрезай контент. Не вмещается даже после уплотнения —
-       СПРОСИ пользователя (увеличить число или что убрать), не режь молча.
-    2) Форму КАЖДОГО слайда выбирай ПОД ЕГО СОДЕРЖАНИЕ из словаря форм
-       (references/layout-system.md §4): число → stats / chart; сравнение → compare;
-       перечень аспектов → cols; одна мысль → statement; цитата → quote; и т.д.
-       ВАРЬИРУЙ формы — не повторяй одну подряд. Первый слайд — ТОЖЕ по содержанию,
-       а НЕ автоматически обложка .layout-cover.
-    3) Каждый <section> = один слайд и несёт: класс-форму + блок рамки .fr.
-       Числа — ТОЛЬКО из «Реестра данных» плана. Крупный текст помечай data-fit.
-       Номер слайда .pg движок проставит сам — оставляй <span class="pg"></span> пустым.
-
-    АНАТОМИЯ ОДНОГО СЛАЙДА (скопируй, замени layout-XXX на нужную форму, наполни
-    готовым блоком из layout-system.md §4):
-    <section class="layout-XXX">
-      <div class="fr" data-decorative>
-        <div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div>
-        <div class="fr-bot"><span>Подпись слева</span><span class="pg"></span></div>
-      </div>
-      ... контент слайда по выбранной форме ...
-    </section>
+    СТАРТОВЫЙ НАБОР РАЗНЫХ ФОРМ (ниже 6 слайдов РАЗНОЙ структуры) — это ОБРАЗЦЫ, не финальная дека.
+    Собери свою деку по плану presentation/<тема>.plan.md:
+      • подбери под каждый слайд подходящую форму, ЗАМЕНИ весь плейсхолдер-текст на реальный;
+      • СОХРАНИ РАЗНООБРАЗИЕ — не делай все слайды одной формой (аудит ловит 3 одинаковых подряд);
+      • ПЕРВЫЙ слайд — обложка (layout-cover) с реальной ГЛАВНОЙ мыслью (не пустой титульник);
+      • лишние формы удали, нужные продублируй/возьми ещё из references/layout-system.md §4
+        (есть также: split — текст+визуал, chart — график, cards, list — шаги, compare — сравнение);
+      • числа — ТОЛЬКО из «Реестра данных» плана; .pg оставляй пустым (движок проставит номер).
+    Держи РОВНО столько слайдов, сколько просил пользователь, вместив всю информацию.
   -->
+
+  <!-- 1 · ОБЛОЖКА (всегда первой; дай реальный посыл, не пустой титул) -->
+  <section class="layout-cover invert">
+    <div class="ring" data-decorative style="width:680px;height:680px;right:-170px;top:-190px;"></div>
+    <div class="disc" data-decorative style="width:430px;height:430px;right:-40px;top:-60px;"></div>
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div><div class="fr-bot"><span>Подзаголовок</span><span class="pg"></span></div></div>
+    <p class="kicker">Кикер</p>
+    <h1 data-fit data-fit-min="64">Главная мысль презентации одной фразой</h1>
+    <p class="sub">Короткое пояснение: для кого и о чём.</p>
+  </section>
+
+  <!-- 2 · ТЕЗИС -->
+  <section class="layout-statement">
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div><div class="fr-bot"><span>Главное</span><span class="pg"></span></div></div>
+    <div class="bar"></div>
+    <p class="lead" data-fit data-fit-min="52">Одна сильная мысль крупно — её видно за 3 секунды.</p>
+  </section>
+
+  <!-- 3 · КОЛОНКИ (перечень аспектов) -->
+  <section class="layout-cols">
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div><div class="fr-bot"><span>Подпись слева</span><span class="pg"></span></div></div>
+    <div><p class="kicker">Подход</p><h2 class="title" data-fit data-fit-min="40">Заголовок-вывод, а не тема</h2></div>
+    <div class="cols">
+      <div class="col"><div class="idx">01</div><div class="ct"><h3>Первое</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
+      <div class="col"><div class="idx">02</div><div class="ct"><h3>Второе</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
+      <div class="col"><div class="idx">03</div><div class="ct"><h3>Третье</h3><p>Что это и зачем. Коротко, по делу.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 4 · ЦИФРЫ (числа только из реестра) -->
+  <section class="layout-stats">
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div><div class="fr-bot"><span>В цифрах</span><span class="pg"></span></div></div>
+    <div><p class="kicker">Результат</p><h2 class="title" data-fit data-fit-min="40">Цифры, которые говорят сами за себя</h2></div>
+    <div class="stats">
+      <div class="stat"><div class="num" data-fit data-fit-min="56">2×</div><div class="lab">подпись к метрике</div></div>
+      <div class="stat"><div class="num" data-fit data-fit-min="56">−40%</div><div class="lab">подпись к метрике</div></div>
+      <div class="stat"><div class="num" data-fit data-fit-min="56">12</div><div class="lab">подпись к метрике</div></div>
+    </div>
+  </section>
+
+  <!-- 5 · ЦИТАТА (тёмный акцентный слайд для ритма) -->
+  <section class="layout-quote invert">
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Раздел</span></div><div class="fr-bot"><span>Цитата</span><span class="pg"></span></div></div>
+    <blockquote data-fit data-fit-min="36">«Сильная цитата или ключевой вывод, ради которого собрана дека».</blockquote>
+    <div class="by">— Источник цитаты</div>
+  </section>
+
+  <!-- 6 · ФИНАЛ (вывод + действие, НЕ «Спасибо за внимание») -->
+  <section class="layout-cover invert">
+    <div class="ring" data-decorative style="width:620px;height:620px;left:-200px;bottom:-220px;"></div>
+    <div class="disc" data-decorative style="width:380px;height:380px;left:-70px;bottom:-90px;"></div>
+    <div class="fr" data-decorative><div class="fr-top"><span class="wm"><span class="dot"></span>Сбер</span><span class="sec">Вывод</span></div><div class="fr-bot"><span>Контакт / следующий шаг</span><span class="pg"></span></div></div>
+    <p class="kicker">Что дальше</p>
+    <h1 data-fit data-fit-min="56">Главный вывод и конкретное действие</h1>
+    <p class="sub">Контакт / следующий шаг / ссылка.</p>
+  </section>
 
 </deck-stage>
 
