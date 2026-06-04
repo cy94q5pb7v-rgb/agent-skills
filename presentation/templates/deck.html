@@ -8,7 +8,7 @@
        не назвал другой бренд (другие пресеты — references/layout-system.md §6).
     3. Собери деку из стартовых форм: подбери форму под каждый пункт плана, ЗАМЕНИ
        плейсхолдер-текст на реальный, СОХРАНИ разнообразие форм, лишние удали, нужные
-       добавь из references/layout-system.md §4. Первый слайд — обложка (layout-cover).
+       подбери из ГАЛЕРЕИ references/forms.md (формы по типу контента). Первый слайд — обложка (layout-cover).
        РОВНО столько слайдов, сколько просил пользователь, вместив ВСЮ информацию.
     4. Полную шпаргалку (формы, рамка, бюджет высоты) см. references/layout-system.md
     5. НИЧЕГО не трогай ниже маркера ENGINE (внизу файла) — это движок слайдов.
@@ -184,6 +184,28 @@
   .compare ul{ margin:0; padding-left:1.1em; } .compare li{ font:400 24px/1.5 var(--muted); margin:.25em 0; }
 
   .stretch{ height:100%; width:100%; }
+
+  /* Одно гигантское число (герой) — когда ОДНА цифра и есть весь слайд */
+  .layout-hero{ display:grid; align-content:center; gap:22px; position:relative; z-index:1; }
+  .layout-hero .kicker{ margin-bottom:6px; }
+  .layout-hero .huge{ font:500 260px/0.9 var(--font-display); color:var(--accent); letter-spacing:-.04em; }
+  .layout-hero .cap{ font:400 36px/1.35 var(--font-body); color:var(--muted); max-width:30ch; margin:0; }
+  section.invert .layout-hero .huge{ color:var(--accent-l); }
+  section.invert .layout-hero .cap{ color:var(--muted-d); }
+
+  /* Таймлайн — этапы по горизонтали (процесс/хронология) */
+  .layout-timeline{ display:grid; grid-template-rows:auto 1fr; gap:48px; }
+  .timeline{ display:grid; grid-auto-flow:column; grid-auto-columns:1fr; align-content:center; }
+  .tstep{ display:flex; flex-direction:column; gap:20px; padding-right:48px; position:relative; }
+  .tstep::before{ content:""; position:absolute; left:0; right:0; top:11px; height:2px; background:var(--line); z-index:0; }
+  .tstep:last-child::before{ display:none; }
+  .tstep .dot{ width:24px; height:24px; border-radius:50%; background:var(--accent); z-index:1; }
+  .tstep h3{ font:600 28px/1.2 var(--font-body); margin:0; }
+  .tstep p{ font:400 22px/1.45 var(--muted); margin:0; max-width:22ch; }
+  section.invert .tstep::before{ background:var(--line-d); }
+  section.invert .tstep .dot{ background:var(--accent-l); }
+  section.invert .tstep h3{ color:var(--ink-invert); }
+  section.invert .tstep p{ color:var(--muted-d); }
 </style>
 </head>
 <body>
@@ -195,8 +217,9 @@
       • подбери под каждый слайд подходящую форму, ЗАМЕНИ весь плейсхолдер-текст на реальный;
       • СОХРАНИ РАЗНООБРАЗИЕ — не делай все слайды одной формой (аудит ловит 3 одинаковых подряд);
       • ПЕРВЫЙ слайд — обложка (layout-cover) с реальной ГЛАВНОЙ мыслью (не пустой титульник);
-      • лишние формы удали, нужные продублируй/возьми ещё из references/layout-system.md §4
-        (есть также: split — текст+визуал, chart — график, cards, list — шаги, compare — сравнение);
+      • лишние формы удали, нужные продублируй/возьми ещё из ГАЛЕРЕИ references/forms.md
+        (есть также: split — текст+визуал, chart — график, hero — одно число, timeline — этапы,
+         cards, list — шаги, compare — сравнение);
       • числа — ТОЛЬКО из «Реестра данных» плана; .pg оставляй пустым (движок проставит номер).
     Держи РОВНО столько слайдов, сколько просил пользователь, вместив всю информацию.
   -->
