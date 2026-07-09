@@ -1,0 +1,23 @@
+{
+  "skill_name": "townhall_compose-deck",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Собери презентацию по дизайн-системе sber-roadmap-kit из материалов в файле brief.md. Стиль — Бонни энд Слайд, формат HTML.",
+      "expected_output": "Asks for/loads the kit (manifest.json + tokens.json), reads brief.md, produces ONE artifacts/*.html deck using deck_stage.js. Slides reuse the kit's backgrounds/layouts/icons by manifest role; action titles; one idea per slide; no invented numbers/colors; overflow audit passes (no clipped or overlapping text). Only deck_stage.js copied alongside — no other scratch files.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "На третьем слайде заголовок наезжает на картинку, а кнопку внизу сделай меньше. Больше ничего не трогай.",
+      "expected_output": "Performs a surgical point edit: fixes ONLY slide 3's title/image collision and shrinks the named button, leaving every other slide and element byte-for-byte unchanged. Does NOT regenerate the deck. Re-runs the overflow audit only on the affected slide.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Есть разложенная дизайн-система по пути ~/.claude/design-systems/townhall-2026 и вот вордовский файл с планом выступления. Сделай из этого деку, максимально используя готовые элементы системы.",
+      "expected_output": "Loads the kit at the given path, reads the docx content, maps content to a one-idea-per-slide structure, and builds an HTML deck that leans on the kit's ready layouts/components/backgrounds rather than inventing new ones. Token-frugal (single HTML file). States a short design plan before building.",
+      "files": []
+    }
+  ]
+}

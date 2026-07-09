@@ -1,0 +1,23 @@
+{
+  "skill_name": "townhall_decompose-template",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Вот шаблон презентации: artifacts/sber-roadmap/РГ-УКО-Докупка-привилегий.pptx. Разбери его на дизайн-элементы, чтобы потом собирать новые деки в этом же стиле. Слаг возьми sber-roadmap-kit.",
+      "expected_output": "Design-system folder at ~/.claude/design-systems/sber-roadmap-kit/ with tokens.json (real palette + fonts + slide size), manifest.json mapping every extracted asset with role/when-to-use, backgrounds/ populated from the 6 slide backdrops, layouts/ with archetypes, preview.html and USAGE.md. Colours reflect the actual slides (not stock Office theme defaults).",
+      "files": ["artifacts/sber-roadmap/РГ-УКО-Докупка-привилегий.pptx"]
+    },
+    {
+      "id": 2,
+      "prompt": "Возьми эту готовую HTML-деку и вытащи из неё все переиспользуемые части — иконки, фоны, шрифты, цвета, раскладки слайдов — в дизайн-систему, чтобы make-deck потом ими пользовался.",
+      "expected_output": "Reads the HTML deck, pulls :root CSS variables into tokens.json, extracts inline SVGs into icons/decorations, images into backgrounds/imagery, repeated section markup into layouts/, cards into components/. Writes manifest.json + preview.html + USAGE.md under a sensible slug. No invented values.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "У меня только скриншоты слайдов фирменного шаблона (прикладываю 3 штуки). Разбери их на дизайн-элементы для повторного использования и честно помечай, что восстановлено приблизительно.",
+      "expected_output": "Uses vision extraction for palette/fonts/layouts/copy, builds the standard folder structure, and marks every reconstructed asset as source: screenshot-approx in the manifest, with a gaps note that vector icons/crisp backgrounds could not be recovered pixel-perfect. tokens.json + manifest.json + preview.html + USAGE.md present.",
+      "files": []
+    }
+  ]
+}
